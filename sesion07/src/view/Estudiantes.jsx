@@ -21,6 +21,7 @@ import { Container,
          ListItemText,
          ListItemIcon
 } from "@material-ui/core";
+
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import FormControl from '@material-ui/core/FormControl';
@@ -63,7 +64,8 @@ const BootstrapInput = withStyles((theme) => ({
 
 
 class Estudiantes extends Component {
-    titulo="Estudiantes"; 
+   
+    titulo="ESTUDIANTES"; 
     frnEstNoControl = React.createRef();
     frnEstCarrera =React.createRef();
     frnEstNombre = React.createRef();
@@ -73,6 +75,7 @@ class Estudiantes extends Component {
         super(props);
         this.state = {value: "Ingeniería Informática",
         edit : false,
+       // tb : "off",
         idEstudiante: 0,
         estudiantesA: []
         };
@@ -84,6 +87,17 @@ class Estudiantes extends Component {
       handleChange(event) {
         this.setState({value: event.target.value});
       }
+
+      textoOn(){
+        var newState =this.state;
+        newState.tb="on";
+        this.setState(newState);
+      }
+      textoOff(){
+        var newState =this.state;
+        newState.tb="off";
+        this.setState(newState);
+      }
     
       handleSubmit(event) {
         alert('Your favorite flavor is: ' + this.state.value);
@@ -91,8 +105,16 @@ class Estudiantes extends Component {
       }
 
       addEstudiante = event => {
+
+        event.preventDefault();
+        var newState = this.state;
+       // newState.edit = true;
+       // this.setState(newState);
+
+
+        
         //this.instructores.push(this.frnNombre.value);
-       alert('Estas anadiendo' + this.state.value+this.frnEstNoControl.value+this.frnEstNombre.value);
+       //alert('Estas anadiendo' + this.state.value+this.frnEstNoControl.value+this.frnEstNombre.value);
        // event.preventDefault();
         const data = {estNoControl:this.frnEstNoControl.value, estNombre:this.frnEstNombre.value, estCarrera:this.state.value}
         if (!this.state.edit)
@@ -101,41 +123,60 @@ class Estudiantes extends Component {
           axios.post(url,data).then(res => console.log(res.data));
            this.frnEstNoControl.value="";
            this.frnEstNombre.value="";
-           this.frnEstNoControl.focus();
-          this.frnEstNombre.focus();
+          this.frnEstNombre.focus();   
+          this.frnEstNoControl.focus();
+         
+          
         }
         else
         {
            const url ='http://localhost:4000/api/estudiantes/'+this.state.id;
            const data = {estNoControl:this.frnEstNoControl.value, estNombre:this.frnEstNombre.value, estCarrera:this.state.value}
            axios.put(url,data).then(res => console.log(res.data));
+           this.frnEstNoControl.value="";
+           this.frnEstNombre.value="";
+          this.frnEstNombre.focus();
+          this.frnEstNoControl.focus();
         }
+        newState.edit = false;
+        this.setState(newState);
+        this.textoOff();
+        this.loadEstudiantes();
         this.loadEstudiantes();
 
     }
 
-    viewEstudiante =(id) => event=>
+    viewEstudiante =(row) => event=>
     {
-     // event.preventDefault();
+      event.preventDefault();
       this.frnEstNoControl.value="";
       this.frnEstNombre.value="";
       this.frnEstNoControl.focus();
       this.frnEstNombre.focus();
-      this.frnEstNombre.value=this.state.estudiantesA[id].estNombre;
+      this.frnEstNombre.value=this.state.estudiantesA[row].estNombre;
     }
 
     editEstudiante =(id,row)=> event =>
     {
       event.preventDefault();
+      this.textoOn();
       var newState = this.state;
       newState.edit = true;
       newState.id =id;
       this.setState(newState);
-      this.frnestNoControl.focus();
-      this.frnestNoControl.value = this.state.estudiantesA[row].estNoControl;
-      this.frnestNombre.focus();
-      this.frnestNombre.value = this.state.estudiantesA[row].estNombre;
-      this.value=this.state.estudiantesA[row].estCarrera;
+      this.frnEstNombre.focus();
+      this.frnEstNoControl.focus();
+      this.frnEstNoControl.value = this.state.estudiantesA[row].estNoControl;
+      this.frnEstNombre.value = this.state.estudiantesA[row].estNombre;
+      this.frnEstNoControl.focus();
+      var newState2 =this.state;
+      newState2.value=this.state.estudiantesA[row].estCarrera;
+      this.setState(newState2);
+      //this.value=this.state.estudiantesA[row].estCarrera; este si funciona es el original
+
+      //this.frnEstCarrera.value=this.value;
+      //this.setState({frnEstCarrera.value : value});
+      //this.frnEstCarrera.focus();
     }
 
     deleteEstudiante =(id) => event =>
@@ -143,8 +184,14 @@ class Estudiantes extends Component {
       //event.preventDefault();
       const url ='http://localhost:4000/api/estudiantes/'+id;
       axios.delete(url).then(res => console.log(res.data));
+      this.frnEstNoControl.value="";
+      this.frnEstNombre.value="";
+      this.frnEstNombre.focus();
+      this.frnEstNoControl.focus();
+      this.loadEstudiantes();
       this.loadEstudiantes();
       console.log(url);
+      this.textoOff();
 
     }
 
@@ -187,7 +234,7 @@ class Estudiantes extends Component {
                    
                   
                   <FormControl margin="1">
-                    <InputLabel htmlFor="demo-customized-select-native">Carrera</InputLabel>
+                    <InputLabel htmlFor="demo-customized-select-native" >Carrera</InputLabel>
                     <NativeSelect
                     id="demo-customized-select-native"
                     value={this.state.value}
@@ -212,6 +259,7 @@ class Estudiantes extends Component {
                         type = "text"
                         margin= "normal"
                         variant="outlined"
+                        focused = "off"
                         inputRef={e => (this.frnEstNoControl=e)}
                     />    
                     
@@ -221,6 +269,7 @@ class Estudiantes extends Component {
                         type = "text"
                         margin= "normal"
                         variant="outlined"
+                        focused ="off"
                         inputRef={e => (this.frnEstNombre=e)}
                     />
                    &nbsp; &nbsp;

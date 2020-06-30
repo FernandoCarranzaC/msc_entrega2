@@ -75,6 +75,7 @@ class Catalogos extends Component {
     {
       super(props);
       this.state= {
+                  value : "Deportiva/Cultural/Civica",
                   edit:false,
                   idCatalogo: 0,
                   catalogoA: []
@@ -85,10 +86,6 @@ class Catalogos extends Component {
     }
 
 
-
-  
-   
-    
       handleChange(event) {
         this.setState({value: event.target.value});
       }
@@ -101,7 +98,8 @@ class Catalogos extends Component {
       
 
       addActividad = event => {
-        alert('Estas anadiendo' + this.state.value+this.frnActClave.value+this.frnActNombre.value);
+        var newState = this.state;
+       // alert('Estas anadiendo' + this.state.value+this.frnActClave.value+this.frnActNombre.value);
        // event.preventDefault();
         const data = {actClave:this.frnActClave.value, actNombre:this.frnActNombre.value, actCategoria:this.state.value,
                       actObjetivo:this.frnActObjetivo.value, actContenido:this.frnActContenido.value}
@@ -126,8 +124,19 @@ class Catalogos extends Component {
            const data = {actClave:this.frnActClave.value, actNombre:this.frnActNombre.value, actCategoria:this.state.value,
             actObjetivo:this.frnActObjetivo.value, actContenido:this.frnActContenido.value}
            axios.put(url,data).then(res => console.log(res.data));
+           this.frnActClave.value="";
+           this.frnActNombre.value="";
+           this.frnActObjetivo.value="";
+           this.frnActContenido.value="";
+           this.frnActClave.focus();
+           this.frnActNombre.focus();
+           this.frnActObjetivo.focus();
+           this.frnActContenido.focus();
+           this.frnActClave.focus();
         }
-      
+        newState.edit = false;
+        this.setState(newState);
+        this.loadActividades();
         this.loadActividades();
       
 
@@ -157,15 +166,17 @@ class Catalogos extends Component {
       newState.id =id;
       this.setState(newState);
       this.frnActClave.focus();
-      this.frnActClave.value = this.state.catalogoA[row].actClave;
       this.frnActNombre.focus();
-      this.frnActNombre.value = this.state.catalogoA[row].actNombre;
-      this.value=this.state.catalogoA[row].actCategoria;
       this.frnActObjetivo.focus();
-      this.frnActObjetivo.value=this.state.catalogoA[row].actObjetivo;
       this.frnActContenido.focus();
+      this.frnActClave.value = this.state.catalogoA[row].actClave;
+      this.frnActNombre.value = this.state.catalogoA[row].actNombre;
+      this.frnActObjetivo.value=this.state.catalogoA[row].actObjetivo;
       this.frnActContenido.value=this.state.catalogoA[row].actContenido;
       this.frnActClave.focus();
+      var newState2 =this.state;
+      newState2.value=this.state.catalogoA[row].actCategoria;
+      this.setState(newState2);
     }
 
     deleteActividad =(id) => event =>
@@ -173,6 +184,16 @@ class Catalogos extends Component {
       //event.preventDefault();
       const url ='http://localhost:4000/api/actividades/'+id;
       axios.delete(url).then(res => console.log(res.data));
+      this.frnActClave.value="";
+      this.frnActNombre.value="";
+      this.frnActObjetivo.value="";
+      this.frnActContenido.value="";
+      this.frnActClave.focus();
+      this.frnActNombre.focus();
+      this.frnActObjetivo.focus();
+      this.frnActContenido.focus();
+    
+      this.loadActividades();
       this.loadActividades();
       console.log(url);
 
@@ -268,6 +289,7 @@ class Catalogos extends Component {
                     type = "text"
                     margin = "Normal"
                     variant = "outlined"
+                    focused ="on"
                     align = "left"
                     inputRef ={e=>(this.frnActClave=e)}
                />
@@ -278,6 +300,7 @@ class Catalogos extends Component {
                     margin = "Normal"
                     variant = "outlined"
                     align = "left"
+                    focused = "on"
                     inputRef ={e=>(this.frnActNombre=e)}
                />
                &nbsp;&nbsp;
@@ -288,7 +311,7 @@ class Catalogos extends Component {
                     margin = "Normal"
                     variant = "outlined"
                     align = "left"
-                
+                    focused = "on"
                     inputRef ={e=>(this.frnActObjetivo=e)}
                />
                 <br></br>
@@ -298,6 +321,8 @@ class Catalogos extends Component {
                     margin = "Normal"
                     variant = "outlined"
                     align = "left"
+                    focused = "on"
+                  
                     inputRef ={e=>(this.frnActContenido=e)}
                />
 

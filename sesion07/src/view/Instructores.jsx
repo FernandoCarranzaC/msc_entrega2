@@ -90,8 +90,10 @@ class Instructores extends Component {
       }
 
     addInstructor = event => {
+      event.preventDefault();
+      var newState = this.state;
         //this.instructores.push(this.frnNombre.value);
-        alert('Estas anadiendo' + this.state.value+this.frnInsClave.value+this.frnInsNombre.value);
+       // alert('Estas anadiendo' + this.state.value+this.frnInsClave.value+this.frnInsNombre.value);
        // event.preventDefault();
         const data = {insClave:this.frnInsClave.value, insNombre:this.frnInsNombre.value, insDepto:this.state.value}
         if (!this.state.edit)
@@ -110,10 +112,15 @@ class Instructores extends Component {
            const url ='http://localhost:4000/api/instructores/'+this.state.id;
            const data = {insClave:this.frnInsClave.value, insNombre:this.frnInsNombre.value, insDepto:this.state.value};
            axios.put(url,data).then(res => console.log(res.data));
+           this.frnInsClave.value="";
+           this.frnInsNombre.value="";
+           this.frnInsNombre.focus();
+           this.frnInsClave.focus();
         }
-      
+        newState.edit = false;
+        this.setState(newState);
         this.loadInstructores();
-      
+        this.loadInstructores();
 
     }
  
@@ -135,10 +142,13 @@ class Instructores extends Component {
       newState.id =id;
       this.setState(newState);
       this.frnInsClave.focus();
-      this.frnInsClave.value = this.state.instructoresA[row].insClave;
       this.frnInsNombre.focus();
+      this.frnInsClave.value = this.state.instructoresA[row].insClave;
       this.frnInsNombre.value = this.state.instructoresA[row].insNombre;
-      this.value=this.state.instructoresA[row].insDepto;
+      this.frnInsClave.focus();
+      var newState2 =this.state;
+      newState2.value=this.state.instructoresA[row].insDepto;
+      this.setState(newState2);
     }
 
     deleteInstructor =(id) => event =>
@@ -146,6 +156,11 @@ class Instructores extends Component {
       //event.preventDefault();
       const url ='http://localhost:4000/api/instructores/'+id;
       axios.delete(url).then(res => console.log(res.data));
+      this.frnInsClave.value="";
+      this.frnInsNombre.value="";
+      this.frnInsNombre.focus();
+      this.frnInsClave.focus();
+      this.loadInstructores();
       this.loadInstructores();
       console.log(url);
 
@@ -212,6 +227,7 @@ class Instructores extends Component {
                         type = "text"
                         margin= "normal"
                         variant="outlined"
+                        focused = "on"
                         inputRef={e => (this.frnInsClave=e)}
                     />    
                     
@@ -221,6 +237,7 @@ class Instructores extends Component {
                         type = "text"
                         margin= "normal"
                         variant="outlined"
+                        focused = "on"
                         inputRef={e => (this.frnInsNombre=e)}
                     />
                    &nbsp; &nbsp;
